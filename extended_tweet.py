@@ -1,6 +1,6 @@
 from nltk import sent_tokenize
 
-from Sentence import Sentence
+from sentence import Sentence
 
 
 class ExtendedTweet:
