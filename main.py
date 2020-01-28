@@ -12,20 +12,29 @@ def main():
     CAMPAIGN_END_DATE = date(2015, 9, 8)
     CAMPAIGN_START_DATE = date(2015, 9, 1)
 
-    obtain_tweets(CAMPAIGN_START_DATE, CAMPAIGN_END_DATE)
+    obtain_all_tweets(CAMPAIGN_START_DATE, CAMPAIGN_END_DATE)
     create_summary()
 
 
-def obtain_tweets(start_date, end_date):
-    for party in Party.list():
+def obtain_all_tweets(start_date, end_date):
+    for party in Party:
         for single_date in daterange(start_date, end_date):
-            file_name = "./output/" + party + "_" + single_date.strftime('%Y_%m_%d') + ".txt"
-            if has_tweets(file_name):
-                file = open(file_name, "w")
-                raw_tweets = query_tweets(party, begindate=single_date, enddate=tomorrow(single_date))
-                day_tweets = DayTweets(list(map(lambda raw_tweet: ExtendedTweet(raw_tweet.tweet), raw_tweets)))
-                day_tweets.write_on_file(file)
-                file.close()
+            obtain_tweets_from(party.get_full_name(), single_date)
+            if len(party.get_abbreviation()) > 1:
+                obtain_tweets_from(party.get_abbreviation(), single_date)
+            if len(party.get_hashtag()) > 1:
+                obtain_tweets_from(party.get_hashtag(), single_date)
+            obtain_tweets_from(party.get_twitter_account(), single_date)
+
+
+def obtain_tweets_from(query_text, single_date):
+    file_name = "./output/" + query_text + "_" + single_date.strftime('%Y_%m_%d') + ".txt"
+    if has_tweets(file_name):
+        file = open(file_name, "w")
+        raw_tweets = query_tweets(query_text, begindate=single_date, enddate=tomorrow(single_date), lang="es")
+        day_tweets = DayTweets(list(map(lambda raw_tweet: ExtendedTweet(raw_tweet.text), raw_tweets)))
+        day_tweets.write_on_file(file)
+        file.close()
 
 
 def create_summary():
