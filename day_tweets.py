@@ -4,7 +4,8 @@ from extended_tweet import ExtendedTweet
 class DayTweets:
     SEPARATOR = "--------------------------------------"
 
-    def __init__(self, tweets):
+    def __init__(self, party, tweets):
+        self.party = party
         self.tweets = tweets
         self.total_tweets = len(self.tweets)
         self.total_words = self.get_total_words()
