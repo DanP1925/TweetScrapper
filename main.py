@@ -10,7 +10,7 @@ def main():
     CAMPAIGN_START_DATE = date(2015, 9, 1)
 
     obtain_all_tweets(CAMPAIGN_START_DATE, CAMPAIGN_END_DATE)
-    #create_summary()
+    create_summary()
 
 
 def obtain_all_tweets(start_date, end_date):
@@ -32,10 +32,11 @@ def create_summary():
     days_tweets = []
     for file_name in file_names:
         if not file_name[-4:] == ".txt":
-            break
+            continue
         file = open("./output/" + file_name, "r")
-        days_tweets.append(DayTweets.read_from_file(file))
+        days_tweets.append(DayTweets.read_from_file(Party.get_from(file_name), file))
         file.close()
+
     for day_tweets in days_tweets:
         total_tweets += day_tweets.total_tweets
         total_words += day_tweets.total_words
@@ -43,6 +44,22 @@ def create_summary():
     print(total_tweets)
     print(total_words)
     print(len(list(dict.fromkeys(token_list))))
+    print()
+
+    for party in Party:
+        party_tweets = 0
+        party_words = 0
+        party_token_list = []
+        for day_tweets in days_tweets:
+            if day_tweets.party == party:
+                party_tweets += day_tweets.total_tweets
+                party_words += day_tweets.total_words
+                party_token_list += day_tweets.tokens
+        print(party.get_full_name())
+        print(party_tweets)
+        print(party_words)
+        print(len(list(dict.fromkeys(party_token_list))))
+        print()
 
 
 if __name__ == "__main__":

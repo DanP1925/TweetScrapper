@@ -13,7 +13,7 @@ class DayTweets:
         self.total_tokens = len(self.get_tokens())
 
     @staticmethod
-    def read_from_file(file):
+    def read_from_file(party, file):
         file.readline()
         file.readline()
         file.readline()
@@ -30,7 +30,8 @@ class DayTweets:
                     break
                 raw_tweet += line + '\n'
                 raw_tweets.append(raw_tweet)
-        return DayTweets(list(map(lambda raw_tweet: ExtendedTweet(raw_tweet), raw_tweets)))
+
+        return DayTweets(party, list(map(lambda raw_tweet: ExtendedTweet(raw_tweet), raw_tweets)))
 
     def get_total_words(self):
         total_words = 0

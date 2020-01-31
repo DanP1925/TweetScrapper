@@ -40,6 +40,9 @@ class Party(Enum):
         "twitter_account": "@UPYD"
     }
 
+    def get_full_name(self):
+        return self.value["full_name"]
+
     def obtain_tweets_for(self, single_date):
         self.obtain_tweets_from(self.value["full_name"], single_date)
         self.obtain_tweets_from(self.value["abbreviation"], single_date)
@@ -58,3 +61,25 @@ class Party(Enum):
             file = open(file.file_name, "w")
             day_tweets.write_on_file(file)
             file.close()
+
+    def is_text_from(self, query_text):
+        return query_text in [self.value["full_name"], self.value["abbreviation"], "#" + self.value["abbreviation"],
+                              self.value["twitter_account"]]
+
+    @staticmethod
+    def get_from(file_name):
+        query_text = file_name[:-15]
+        if Party.CS.is_text_from(query_text):
+            return Party.CS
+        elif Party.IU.is_text_from(query_text):
+            return Party.IU
+        elif Party.PP.is_text_from(query_text):
+            return Party.PP
+        elif Party.PSOE.is_text_from(query_text):
+            return Party.PSOE
+        elif Party.PO.is_text_from(query_text):
+            return Party.PO
+        elif Party.UPYD.is_text_from(query_text):
+            return Party.UPYD
+        else:
+            return None
