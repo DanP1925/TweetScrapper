@@ -6,7 +6,7 @@ from party import Party
 
 
 def main():
-    CAMPAIGN_END_DATE = date(2015, 9, 8)
+    CAMPAIGN_END_DATE = date(2015, 10, 1)
     CAMPAIGN_START_DATE = date(2015, 9, 1)
 
     obtain_all_tweets(CAMPAIGN_START_DATE, CAMPAIGN_END_DATE)
@@ -41,9 +41,10 @@ def create_summary():
         total_tweets += day_tweets.total_tweets
         total_words += day_tweets.total_words
         token_list += day_tweets.tokens
-    print(total_tweets)
-    print(total_words)
-    print(len(list(dict.fromkeys(token_list))))
+    print("Resumen")
+    print("Total tweets: " + str(total_tweets))
+    print("Total words: " + str(total_words))
+    print("Total tokens: " + str(len(list(dict.fromkeys(token_list)))))
     print()
 
     for party in Party:
@@ -56,9 +57,9 @@ def create_summary():
                 party_words += day_tweets.total_words
                 party_token_list += day_tweets.tokens
         print(party.get_full_name())
-        print(party_tweets)
-        print(party_words)
-        print(len(list(dict.fromkeys(party_token_list))))
+        print("Total tweets: " + str(party_tweets))
+        print("Total words: " + str(party_words))
+        print("Total tokens: " + str(len(list(dict.fromkeys(party_token_list)))))
         print()
 
 
