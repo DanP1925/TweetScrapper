@@ -58,7 +58,7 @@ class Party(Enum):
                 lang="es"
             )
             day_tweets = DayTweets(self, list(map(lambda raw_tweet: ExtendedTweet(raw_tweet.text), raw_tweets)))
-            file = open(file.file_name, "w")
+            file = open(file.file_name, "w", encoding='utf-8')
             day_tweets.write_on_file(file)
             file.close()
 

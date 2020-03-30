@@ -28,7 +28,7 @@ class DayTweets:
                 line = file.readline()
                 if line == DayTweets.SEPARATOR + '\n':
                     break
-                raw_tweet += line + '\n'
+                raw_tweet += line
                 raw_tweets.append(raw_tweet)
 
         return DayTweets(party, list(map(lambda raw_tweet: ExtendedTweet(raw_tweet), raw_tweets)))

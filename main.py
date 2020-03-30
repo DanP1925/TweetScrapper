@@ -1,16 +1,23 @@
+import csv
 from datetime import timedelta, date
 from os import listdir
 
 from day_tweets import DayTweets
 from party import Party
+from summary_detail import SummaryDetail
+from summary_generator import SummaryGeneratorFactory
+from utils import Utils
+
+SUMMARY_DETAIL = SummaryDetail.TWEET_NUMBERS
+CAMPAIGN_END_DATE = date(2016, 1, 1)
+CAMPAIGN_START_DATE = date(2015, 9, 1)
 
 
 def main():
-    CAMPAIGN_END_DATE = date(2015, 10, 1)
-    CAMPAIGN_START_DATE = date(2015, 9, 1)
-
     obtain_all_tweets(CAMPAIGN_START_DATE, CAMPAIGN_END_DATE)
-    create_summary()
+    convert_tweets_to_csv()
+    summary_generator = SummaryGeneratorFactory.create_summary_generator(SUMMARY_DETAIL)
+    summary_generator.generate_summary()
 
 
 def obtain_all_tweets(start_date, end_date):
@@ -24,43 +31,20 @@ def date_range(start_date, end_date):
         yield start_date + timedelta(n)
 
 
-def create_summary():
-    total_tweets = 0
-    total_words = 0
-    token_list = []
-    file_names = listdir('output')
-    days_tweets = []
+def convert_tweets_to_csv():
+    file_names = listdir("output")
+    csv_file_names = listdir("output_csv")
     for file_name in file_names:
-        if not file_name[-4:] == ".txt":
+        if not Utils.is_text_file(file_name) or is_already_converted(file_name, csv_file_names):
             continue
-        file = open("./output/" + file_name, "r")
-        days_tweets.append(DayTweets.read_from_file(Party.get_from(file_name), file))
-        file.close()
+        with open("./output/" + file_name, "r", encoding="utf-8") as file:
+            day_tweet = DayTweets.read_from_file(Party.get_from(file_name), file)
 
-    for day_tweets in days_tweets:
-        total_tweets += day_tweets.total_tweets
-        total_words += day_tweets.total_words
-        token_list += day_tweets.tokens
-    print("Resumen")
-    print("Total tweets: " + str(total_tweets))
-    print("Total words: " + str(total_words))
-    print("Total tokens: " + str(len(list(dict.fromkeys(token_list)))))
-    print()
 
-    for party in Party:
-        party_tweets = 0
-        party_words = 0
-        party_token_list = []
-        for day_tweets in days_tweets:
-            if day_tweets.party == party:
-                party_tweets += day_tweets.total_tweets
-                party_words += day_tweets.total_words
-                party_token_list += day_tweets.tokens
-        print(party.get_full_name())
-        print("Total tweets: " + str(party_tweets))
-        print("Total words: " + str(party_words))
-        print("Total tokens: " + str(len(list(dict.fromkeys(party_token_list)))))
-        print()
+def is_already_converted(raw_file_name, raw_csv_file_names):
+    file_name = raw_file_name[:-4]
+    csv_file_names = list(map(lambda x: x[:-4], raw_csv_file_names))
+    return file_name in csv_file_names
 
 
 if __name__ == "__main__":
