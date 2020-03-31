@@ -15,7 +15,7 @@ CAMPAIGN_START_DATE = date(2015, 9, 1)
 
 def main():
     obtain_all_tweets(CAMPAIGN_START_DATE, CAMPAIGN_END_DATE)
-    convert_tweets_to_csv()
+    #convert_tweets_to_csv()
     summary_generator = SummaryGeneratorFactory.create_summary_generator(SUMMARY_DETAIL)
     summary_generator.generate_summary()
 
@@ -37,8 +37,15 @@ def convert_tweets_to_csv():
     for file_name in file_names:
         if not Utils.is_text_file(file_name) or is_already_converted(file_name, csv_file_names):
             continue
+        day_tweet = None
         with open("./output/" + file_name, "r", encoding="utf-8") as file:
             day_tweet = DayTweets.read_from_file(Party.get_from(file_name), file)
+
+        csv_name = file_name[:-4] + ".csv"
+        with open("./output_csv/" + csv_name, "w", encoding="utf-8") as csv_file:
+            csv_writer = csv.writer(csv_file)
+            for tweet in day_tweet.tweets:
+                csv_writer.writerow([tweet.raw_tweet])
 
 
 def is_already_converted(raw_file_name, raw_csv_file_names):

@@ -19,17 +19,19 @@ class DayTweets:
         file.readline()
 
         raw_tweets = []
-        while True:
-            line = file.readline()
-            if not line:
-                break
-            raw_tweet = ""
-            while True:
-                line = file.readline()
-                if line == DayTweets.SEPARATOR + '\n':
-                    break
-                raw_tweet += line
+        lines = file.readlines()
+        has_read_tweet_index = False
+        raw_tweet = ""
+        for line in lines:
+            if not has_read_tweet_index:
+                has_read_tweet_index = True
+                continue
+            elif line == DayTweets.SEPARATOR + '\n':
                 raw_tweets.append(raw_tweet)
+                has_read_tweet_index = False
+                raw_tweet = ""
+            else:
+                raw_tweet += line
 
         return DayTweets(party, list(map(lambda raw_tweet: ExtendedTweet(raw_tweet), raw_tweets)))
 
